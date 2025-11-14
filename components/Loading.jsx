@@ -1,12 +1,14 @@
-'use client'
+'use client';
 
 const Loading = () => {
+  return (
+    <div className="flex items-center justify-center h-screen bg-white">
+      <div className="relative w-16 h-16">
+        <div className="absolute inset-0 border-4 border-transparent border-t-emerald-500 rounded-full animate-spin"></div>
+        <div className="absolute inset-1 border-4 border-transparent border-b-emerald-300 rounded-full animate-spin [animation-duration:1.5s]"></div>
+      </div>
+    </div>
+  );
+};
 
-    return (
-        <div className='flex items-center justify-center h-screen'>
-            <div className='w-11 h-11 rounded-full border-3 border-gray-300 border-t-green-500 animate-spin'></div>
-        </div>
-    )
-}
-
-export default Loading
+export default Loading;

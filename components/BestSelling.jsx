@@ -10,7 +10,15 @@ const BestSelling = () => {
 
     return (
         <div className='px-6 my-30 max-w-6xl mx-auto'>
-            <Title title='Best Selling' description={`Showing ${products.length < displayQuantity ? products.length : displayQuantity} of ${products.length} products`} href='/shop' />
+            <div className="text-center mb-12">
+                <Title
+                    title="Best Selling"
+                    description={`Showing ${products.length < displayQuantity ? products.length : displayQuantity
+                        } of ${products.length} available products`}
+                    href="/shop"
+                />
+                <div className="mt-3 w-20 mx-auto border-b-4 border-[#c69d4e] rounded-full"></div>
+            </div>
             <div className='mt-12  grid grid-cols-2 sm:flex flex-wrap gap-6 xl:gap-12'>
                 {products.slice().sort((a, b) => b.rating.length - a.rating.length).slice(0, displayQuantity).map((product, index) => (
                     <ProductCard key={index} product={product} />
