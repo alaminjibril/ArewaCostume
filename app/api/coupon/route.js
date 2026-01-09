@@ -21,10 +21,10 @@ export async function POST(request) {
         }
 
         if(coupon.forNewUser){
-            const useorders = await prisma.order.findMany({
+            const userorders = await prisma.order.findMany({
                 where: {userId}
             })
-            if(useorders.length > 0){
+            if(userorders.length > 0){
                 return NextResponse.json({error: "Coupon valid for new users"},{status: 400})
             }
         }

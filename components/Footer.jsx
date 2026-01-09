@@ -33,7 +33,8 @@ const Footer = () => {
             links: [
                 { text: "+234 7-066-295-967", path: '/', icon: MailIcon },
                 { text: "alaminjibrilsani@gmail.com", path: '/', icon: PhoneIcon },
-                { text: "N0.6 Royal street Danbare, 94102", path: '/', icon: MapPinIcon }
+                { text: "N0.6 Royal street Danbare, 94102", path: '/', icon: MapPinIcon },
+                
             ]
         }
     ];
