@@ -33,6 +33,7 @@ model Product {
     price       Float
     images      String[]
     category    String
+    sizes       Json     @default("[]")  // NEW: Store size and stock info
     inStock     Boolean  @default(true)
     storeId     String
     createdAt   DateTime @default(now())
@@ -78,18 +79,19 @@ model Order {
     address Address @relation(fields: [addressId], references: [id])
 }
 
-// Required for creating an OrderItem: orderId, productId, quantity, price
+// Required for creating an OrderItem: orderId, productId, quantity, price, size (defaults to "N/A")
 model OrderItem {
     orderId   String
     productId String
     quantity  Int
     price     Float
+    size      String  @default("N/A")
 
     // Relations
     order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
     product Product @relation(fields: [productId], references: [id])
 
-    @@id([orderId, productId])
+    @@id([orderId, productId, size])
 }
 
 // Required for creating a Rating: rating, review, userId, productId

@@ -8,6 +8,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+// Helper function to parse cart keys
+const parseCartKey = (cartKey) => {
+    const parts = String(cartKey).split('_');
+    if (parts.length === 1) {
+        return { productId: parts[0], size: "N/A" };
+    }
+    return { productId: parts[0], size: parts.slice(1).join('_') };
+};
+
 export default function Cart() {
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₦';
@@ -23,21 +32,31 @@ export default function Cart() {
     const createCartArray = () => {
         setTotalPrice(0);
         const cartArray = [];
-        for (const [key, value] of Object.entries(cartItems)) {
-            const product = products.find(product => product.id === key);
+        
+        // Iterate through cart items with their keys
+        for (const [cartKey, quantity] of Object.entries(cartItems)) {
+            // Parse the cart key to get productId and size
+            const { productId, size } = parseCartKey(cartKey);
+            
+            // Find the product by productId
+            const product = products.find(p => p.id === productId);
+            
             if (product) {
                 cartArray.push({
                     ...product,
-                    quantity: value,
+                    cartKey: cartKey,      // Keep the full cart key
+                    productId: productId,  // Original product ID
+                    size: size,            // Size (or "N/A")
+                    quantity: quantity,
                 });
-                setTotalPrice(prev => prev + product.price * value);
+                setTotalPrice(prev => prev + product.price * quantity);
             }
         }
         setCartArray(cartArray);
     }
 
-    const handleDeleteItemFromCart = (productId) => {
-        dispatch(deleteItemFromCart({ productId }))
+    const handleDeleteItemFromCart = (productId, size) => {
+        dispatch(deleteItemFromCart({ productId, size }))
     }
 
     useEffect(() => {
@@ -66,8 +85,8 @@ export default function Cart() {
                         </thead>
                         <tbody>
                             {
-                                cartArray.map((item, index) => (
-                                    <tr key={index} className="space-x-2">
+                                cartArray.map((item) => (
+                                    <tr key={item.cartKey} className="space-x-2">
                                         <td className="flex gap-3 my-4">
                                             <div className="flex gap-3 items-center justify-center bg-slate-100 size-18 rounded-md">
                                                 <Image src={item.images[0]} className="h-14 w-auto" alt="" width={45} height={45} />
@@ -75,15 +94,21 @@ export default function Cart() {
                                             <div>
                                                 <p className="max-sm:text-sm">{item.name}</p>
                                                 <p className="text-xs text-slate-500">{item.category}</p>
+                                                {item.size !== "N/A" && (
+                                                    <p className="text-xs text-slate-600 font-medium">Size: {item.size}</p>
+                                                )}
                                                 <p>{currency}{item.price}</p>
                                             </div>
                                         </td>
                                         <td className="text-center">
-                                            <Counter productId={item.id} />
+                                            <Counter productId={item.productId} size={item.size} />
                                         </td>
                                         <td className="text-center">{currency}{(item.price * item.quantity).toLocaleString()}</td>
                                         <td className="text-center max-md:hidden">
-                                            <button onClick={() => handleDeleteItemFromCart(item.id)} className=" text-red-500 hover:bg-red-50 p-2.5 rounded-full active:scale-95 transition-all">
+                                            <button 
+                                                onClick={() => handleDeleteItemFromCart(item.productId, item.size)} 
+                                                className="text-red-500 hover:bg-red-50 p-2.5 rounded-full active:scale-95 transition-all"
+                                            >
                                                 <Trash2Icon size={18} />
                                             </button>
                                         </td>

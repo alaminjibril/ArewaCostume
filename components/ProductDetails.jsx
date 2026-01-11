@@ -7,6 +7,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Counter from "./Counter";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 const ProductDetails = ({ product }) => {
 
@@ -16,16 +17,40 @@ const ProductDetails = ({ product }) => {
     const cart = useSelector(state => state.cart.cartItems);
     const dispatch = useDispatch();
 
-    const router = useRouter()
+    const router = useRouter();
 
     const [mainImage, setMainImage] = useState(product.images[0]);
+    const [selectedSize, setSelectedSize] = useState("");
+
+    // Parse sizes from JSON
+    const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+    const hasSizes = sizes.length > 0;
 
     const addToCartHandler = () => {
-        dispatch(addToCart({ productId }))
-    }
+        // Check if product needs size selection
+        if (hasSizes && !selectedSize) {
+            toast.error("Please select a size");
+            return;
+        }
+
+        // Check if selected size is in stock
+        if (hasSizes) {
+            const sizeInfo = sizes.find(s => s.size === selectedSize);
+            if (!sizeInfo || sizeInfo.stock <= 0) {
+                toast.error("Selected size is out of stock");
+                return;
+            }
+        }
+
+        dispatch(addToCart({ productId, size: selectedSize || "N/A" }));
+    };
 
     const averageRating = product.rating.reduce((acc, item) => acc + item.rating, 0) / product.rating.length;
     
+    // Check if current selection is in cart
+    const cartKey = hasSizes ? `${productId}_${selectedSize}` : productId;
+    const isInCart = cart[cartKey];
+
     return (
         <div className="flex max-lg:flex-col gap-12">
             <div className="flex max-sm:flex-col-reverse gap-3">
@@ -56,17 +81,57 @@ const ProductDetails = ({ product }) => {
                     <TagIcon size={14} />
                     <p>Save {((product.mrp - product.price) / product.mrp * 100).toFixed(0)}% right now</p>
                 </div>
+
+                {/* Size Selection */}
+                {hasSizes && (
+                    <div className="mt-6">
+                        <p className="text-lg text-slate-800 font-semibold mb-3">Select Size</p>
+                        <div className="flex flex-wrap gap-2">
+                            {sizes.map((sizeObj) => {
+                                const isOutOfStock = sizeObj.stock <= 0;
+                                const isSelected = selectedSize === sizeObj.size;
+                                
+                                return (
+                                    <button
+                                        key={sizeObj.size}
+                                        onClick={() => !isOutOfStock && setSelectedSize(sizeObj.size)}
+                                        disabled={isOutOfStock}
+                                        className={`px-4 py-2 rounded border transition ${
+                                            isSelected
+                                                ? 'bg-slate-800 text-white border-slate-800'
+                                                : isOutOfStock
+                                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                                : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
+                                        }`}
+                                    >
+                                        {sizeObj.size}
+                                        {isOutOfStock && <span className="text-xs ml-1">(Out)</span>}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {selectedSize && (
+                            <p className="text-sm text-slate-500 mt-2">
+                                {sizes.find(s => s.size === selectedSize)?.stock} items available
+                            </p>
+                        )}
+                    </div>
+                )}
+
                 <div className="flex items-end gap-5 mt-10">
                     {
-                        cart[productId] && (
+                        isInCart && (
                             <div className="flex flex-col gap-3">
                                 <p className="text-lg text-slate-800 font-semibold">Quantity</p>
-                                <Counter productId={productId} />
+                                <Counter productId={productId} size={selectedSize || "N/A"} />
                             </div>
                         )
                     }
-                    <button onClick={() => !cart[productId] ? addToCartHandler() : router.push('/cart')} className="bg-slate-800 text-white px-10 py-3 text-sm font-medium rounded hover:bg-slate-900 active:scale-95 transition">
-                        {!cart[productId] ? 'Add to Cart' : 'View Cart'}
+                    <button 
+                        onClick={() => !isInCart ? addToCartHandler() : router.push('/cart')} 
+                        className="bg-slate-800 text-white px-10 py-3 text-sm font-medium rounded hover:bg-slate-900 active:scale-95 transition"
+                    >
+                        {!isInCart ? 'Add to Cart' : 'View Cart'}
                     </button>
                 </div>
                 <hr className="border-gray-300 my-5" />
