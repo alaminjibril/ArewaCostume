@@ -31,6 +31,12 @@ const OrderItem = ({ order }) => {
                                 </div>
                                 <div className="flex flex-col justify-center text-sm">
                                     <p className="font-medium text-slate-600 text-base">{item.product.name}</p>
+                                    
+                                    {/* ADD THIS: Display size if not N/A */}
+                                    {item.size !== "N/A" && (
+                                        <p className="text-xs text-slate-500 font-medium">Size: {item.size}</p>
+                                    )}
+                                    
                                     <p>{currency}{item.price} Qty : {item.quantity} </p>
                                     <p className="mb-1">{new Date(order.createdAt).toDateString()}</p>
                                     <div>

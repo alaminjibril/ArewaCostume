@@ -41,7 +41,7 @@ const OrderSummary = ({ totalPrice, items }) => {
             toast.success("Coupon Applied")
             
         } catch (error) {
-            toast.error(error?.response?.error || error.message)  
+            toast.error(error?.response?.data?.error || error.message)  
         }
         
     }
@@ -57,18 +57,24 @@ const OrderSummary = ({ totalPrice, items }) => {
             }
             const token = await getToken();
 
+            // CHANGED: Transform items to use cartKey
+            const orderItems = items.map(item => ({
+                id: item.cartKey,  // Use cartKey which contains size info
+                quantity: item.quantity
+            }));
+
             const orderData = {
                 addressId: selectedAddress.id,
-                items,
+                items: orderItems,  // CHANGED: Use transformed items
                 paymentMethod
             }
 
             if(coupon) {
-                orderData.coupon = coupon.code
+                orderData.couponCode = coupon.code  // CHANGED: from 'coupon' to 'couponCode'
             }
+            
             //create order
-
-            const { data } = await axios.post("/api/orders", orderData, {
+            const { data } = await axios.post("/api/orders", orderData, {  // CHANGED: from '/api/orders' to '/api/order'
                 headers: {Authorization: `Bearer ${token}`}
             })
 
@@ -81,11 +87,8 @@ const OrderSummary = ({ totalPrice, items }) => {
             }
             
         } catch (error) {
-            toast.error(error?.response?.error || error.message)
-            
+            toast.error(error?.response?.data?.error || error.message)
         }
-
-        
     }
 
     return (

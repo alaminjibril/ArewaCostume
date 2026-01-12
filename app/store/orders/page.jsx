@@ -152,9 +152,15 @@ export default function StoreOrders() {
                                             className="w-16 h-16 object-cover rounded"
                                         />
                                         <div className="flex-1">
-                                            <p className="text-slate-800">{item.product?.name}</p>
+                                            <p className="text-slate-800 font-medium">{item.product?.name}</p>
+                                            
+                                            {/* ADD THIS: Display size if not N/A */}
+                                            {item.size !== "N/A" && (
+                                                <p className="text-xs text-slate-600">Size: <span className="font-semibold">{item.size}</span></p>
+                                            )}
+                                            
                                             <p>Qty: {item.quantity}</p>
-                                            <p>Price: ${item.price}</p>
+                                            <p>Price: ₦{item.price}</p>
                                         </div>
                                     </div>
                                 ))}

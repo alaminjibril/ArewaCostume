@@ -38,6 +38,7 @@ export async function POST(request) {
             }
         }
         
+        
         // Check if coupon is applicable for new users
         if (couponCode && coupon.forNewUser) {
             const userorders = await prisma.order.findMany({
