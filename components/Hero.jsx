@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { assets } from '@/assets/assets'
 import { ArrowRightIcon, ChevronRightIcon, Sparkles } from 'lucide-react'
 import Image from 'next/image'
@@ -30,13 +31,13 @@ const Hero = () => {
 
             <div className="text-[#4b3a1e] text-sm font-medium mt-6 sm:mt-8">
               <p>Starting from</p>
-              <p className="text-3xl font-semibold">{currency}15,000</p>
+              <p className="text-3xl font-semibold">{currency}40,000</p>
             </div>
 
-            <button className="mt-6 sm:mt-10 bg-[#4b3a1e] text-white text-sm py-3 px-10 rounded-md hover:bg-[#3b2d1a] hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg flex items-center gap-2">
+            <Link href="/shop" className="mt-6 sm:mt-10 bg-[#4b3a1e] text-white text-sm py-3 px-10 rounded-md hover:bg-[#3b2d1a] hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg flex items-center gap-2 inline-flex">
               <Sparkles size={16} />
               SHOP COLLECTION
-            </button>
+            </Link>
           </div>
 
           {/* Model Image */}
@@ -58,9 +59,10 @@ const Hero = () => {
               <p className="text-2xl font-semibold bg-gradient-to-r from-[#3b2d1a] to-[#c89a50] bg-clip-text text-transparent max-w-40">
                 Hausa Royal Styles
               </p>
-              <p className="flex items-center gap-1 mt-4 text-[#4b3a1e] hover:underline cursor-pointer">
+              <Link href="/shop" className="flex items-center gap-1 mt-4 text-[#4b3a1e] hover:underline">
                 View more <ArrowRightIcon className="group-hover:ml-2 transition-all" size={18} />
-              </p>
+              </Link>
+
             </div>
             <Image className="w-28 sm:w-36" src={assets.banner_1} alt="Hausa Attire" />
           </div>
@@ -70,9 +72,9 @@ const Hero = () => {
               <p className="text-2xl font-semibold bg-gradient-to-r from-[#2f3d1d] to-[#74C69D] bg-clip-text text-transparent max-w-40">
                 20% Festival Discount
               </p>
-              <p className="flex items-center gap-1 mt-4 text-[#2f3d1d] hover:underline cursor-pointer">
+              <Link href="/shop" className="flex items-center gap-1 mt-4 text-[#4b3a1e] hover:underline">
                 View more <ArrowRightIcon className="group-hover:ml-2 transition-all" size={18} />
-              </p>
+              </Link>
             </div>
             <Image className="w-28 sm:w-36" src={assets.cap_1} alt="Discount Outfit" />
           </div>
